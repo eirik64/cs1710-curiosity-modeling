@@ -68,4 +68,4 @@ pred BSTTransitionStates {
 
 run {
     ValidStates
-} for exactly 1 State, exactly 10 Node
+} for exactly 1 State, exactly 3 Node
