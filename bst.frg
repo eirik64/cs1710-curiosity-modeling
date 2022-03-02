@@ -1,8 +1,7 @@
 #lang forge/bsl
 
-sig State {
-    root: lone Node, -----The root node of the BST tree if it exists
-    next: lone State -----Every state has at most one next state
+one sig State {
+    root: lone Node -----The root node of the BST tree if it exists
 }
 
 sig Node {
@@ -13,6 +12,7 @@ sig Node {
 pred ValidStates {
     --- Valid States should follow these rules
     all states : State | {
+        some State.root
         all nodes : Node | {
             // nodes should not point to themselves
             not reachable[nodes, nodes, l_child, r_child]
@@ -48,24 +48,75 @@ pred ValidStates {
     --- I believe that's it    
 }
 
-// pred Insert[pre: State, post: State] {
-//     --- Inserting into a BST should follow these rules
-//     --- 1. Everything that was in the pre-state should be in 
-//     --- the post-state in the same position
-//     --- 2. The number of Nodes should increase by 1
-// }
+test expect {
+    noPredicate: {} is sat
+    rootMiddle: {
+        ValidStates
+        all n : Node | {
+            reachable[n, State.root.l_child, l_child, r_child] => State.root.elt > n.elt
+            reachable[n, State.root.r_child, l_child, r_child] => State.root.elt < n.elt
+        }
+        State.root.elt > State.root.l_child.elt
+        State.root.elt < State.root.r_child.elt
+    } is sat
+    rootMiddleLessThan: {
+        ValidStates
+        all n : Node | {
+            reachable[n, State.root.l_child, l_child, r_child]
+            reachable[n, State.root.l_child, l_child, r_child] => State.root.elt < n.elt
+        }
+    } for exactly 3 Node is unsat
+    allNodesMiddle: {
+        ValidStates
+        all disj n1, n2 : Node | {
+            reachable[n1, n2.l_child, l_child, r_child] => n2.elt > n1.elt
+            reachable[n1, n2.r_child, l_child, r_child] => n2.elt < n1.elt
+            some n2.l_child => n2.elt > n2.l_child.elt
+            some n2.r_child => n2.elt < n2.r_child.elt
+        }
+    } for exactly 10 Node is sat
+    allNodesMiddleNoGreater: {
+        ValidStates
+        // checks right child exists
+        some n : Node | {
+            some n.r_child
+        }
+        all disj n1, n2 : Node | {
+            reachable[n1, n2.l_child, l_child, r_child] => n2.elt > n1.elt
+            reachable[n1, n2.r_child, l_child, r_child] => n2.elt > n1.elt
+            some n2.l_child => n2.elt > n2.l_child.elt
+            some n2.r_child => n2.elt > n2.r_child.elt
+        }
+    } for exactly 10 Node is unsat
+    unBalancedTreeLeft: {
+        ValidStates
+        all disj n1, n2 : Node | {
+            reachable[n1, n2.l_child, l_child, r_child] => n2.elt > n1.elt
+            reachable[n1, n2.r_child, l_child, r_child] => n2.elt > n1.elt
+            some n2.l_child => n2.elt > n2.l_child.elt
+            some n2.r_child => n2.elt > n2.r_child.elt
+        }
+    } for exactly 10 Node is sat
+    noSameChild: {
+        ValidStates
+        some n : Node {
+            // if two child exist, can't be same
+            some n.l_child
+            some n.r_child
+            (some n.l_child and some n.r_child) => n.l_child = n.r_child
+        }
+    } is unsat
+    noSameEle: {
+        ValidStates
+        all disj n1, n2 : Node {
+            n1.elt = n2.elt
+        } 
+    } for exactly 10 Node is unsat
+    
 
-// pred Remove[pre: State, post: State] {
-//     --- Inserting into a BST should follow these rules
-//     --- 1. Everything that was in the pre-state should be in 
-//     --- the post-state in the same position
-//     --- 2. The number of Nodes should decrease by 1
-// }
-
-pred BSTTransitionStates {
 
 }
 
 run {
     ValidStates
-} for exactly 1 State, exactly 3 Node
+} for exactly 10 Node
