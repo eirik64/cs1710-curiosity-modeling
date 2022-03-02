@@ -50,6 +50,7 @@ pred ValidStates {
 
 test expect {
     noPredicate: {} is sat
+    -- every node is less than/greater than root node in their respective spots
     rootMiddle: {
         ValidStates
         all n : Node | {
@@ -59,6 +60,7 @@ test expect {
         State.root.elt > State.root.l_child.elt
         State.root.elt < State.root.r_child.elt
     } is sat
+    -- if we have node on left side, root must not be less than
     rootMiddleLessThan: {
         ValidStates
         all n : Node | {
@@ -66,6 +68,7 @@ test expect {
             reachable[n, State.root.l_child, l_child, r_child] => State.root.elt < n.elt
         }
     } for exactly 3 Node is unsat
+    -- all nodes must be in between its left and right subtrees.
     allNodesMiddle: {
         ValidStates
         all disj n1, n2 : Node | {
@@ -75,6 +78,7 @@ test expect {
             some n2.r_child => n2.elt < n2.r_child.elt
         }
     } for exactly 10 Node is sat
+    -- no node must be greater than any node in its right subtree
     allNodesMiddleNoGreater: {
         ValidStates
         // checks right child exists
@@ -88,6 +92,7 @@ test expect {
             some n2.r_child => n2.elt > n2.r_child.elt
         }
     } for exactly 10 Node is unsat
+    -- displays tree that only has left subtree to avoid being unsatisfiable
     unBalancedTreeLeft: {
         ValidStates
         all disj n1, n2 : Node | {
@@ -97,6 +102,7 @@ test expect {
             some n2.r_child => n2.elt > n2.r_child.elt
         }
     } for exactly 10 Node is sat
+    -- left and right child if exists can not be same
     noSameChild: {
         ValidStates
         some n : Node {
@@ -106,6 +112,7 @@ test expect {
             (some n.l_child and some n.r_child) => n.l_child = n.r_child
         }
     } is unsat
+    -- no node has same element.
     noSameEle: {
         ValidStates
         all disj n1, n2 : Node {
