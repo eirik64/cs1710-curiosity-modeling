@@ -1,7 +1,6 @@
 const d3 = require('d3')
 let num_states = 0;
 let num_nodes = 0;
-let w = 1;
 d3.selectAll("svg > *").remove();
 
 function countNumNodes(state) {
@@ -22,13 +21,13 @@ function countStates() {
     }
 }
 
-function printNode(row, col, yoffset, value) {
+function printNode(row, col, yoffset, distance, value) {
     let cx = (row+1)*25;
     let cy = (col+1)*15 + yoffset;
-    let x2_left = ((row - w)+1)*25;
-    let x2_right = ((row + w)+1)*25;
+    let x2_left = ((row - (distance/2.0))+1)*25;
+    let x2_right = ((row + (distance/2.0))+1)*25;
     let y2 = ((col+1)+1)*15 + yoffset+30;
-    let r = 15
+    let r = 10;
     d3.select(svg)
         .append("line")
         .style("stroke", "black")
@@ -70,11 +69,11 @@ function printLeaf(row, col, yoffset) {
         .attr("r", r);
 }
 
-function printState(currentNode, yoffset, row, col) {
+function printState(currentNode, yoffset, row, col, distance) {
     if (currentNode.elt.toString() != "") {
-        printNode(row, col, yoffset, currentNode.elt.toString());
-        printState(currentNode.l_child, yoffset+30, row - w, col+1);
-        printState(currentNode.r_child, yoffset+30, row + w, col+1);
+        printNode(row, col, yoffset, distance, currentNode.elt.toString());
+        printState(currentNode.l_child, yoffset+30, row - (distance/2.0), col+1, distance/2.0);
+        printState(currentNode.r_child, yoffset+30, row + (distance/2.0), col+1, distance/2.0);
     } else {
         printLeaf(row, col, yoffset);
     }
@@ -87,7 +86,7 @@ for(b = 0; b < num_states; b++) {
 if(State.atom("State"+b) != null) {
     let state = State.atom("State"+b);
     countNumNodes(state);
-    printState(state.root, offset, num_nodes/2.0, 0);
+    printState(state.root, offset, num_nodes/2.0, 0, num_nodes/2.0);
 }  
 offset = offset + 55;
 }
