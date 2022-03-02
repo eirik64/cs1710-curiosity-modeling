@@ -2,7 +2,7 @@
 
 sig State {
     root: lone Node, -----The root node of the BST tree if it exists
-    next: lone State -----Every state has at most one next state
+    next: lone State -----Every state has at most one next state 
 }
 
 sig Node {
@@ -43,9 +43,6 @@ pred ValidStates {
             }
         }
     }
-
-
-    --- I believe that's it    
 }
 
 // pred Insert[pre: State, post: State] {
@@ -63,9 +60,9 @@ pred ValidStates {
 // }
 
 pred BSTTransitionStates {
-
+ 
 }
 
 run {
     ValidStates
-} for exactly 1 State, exactly 3 Node
+} for exactly 2 State, exactly 3 Node
