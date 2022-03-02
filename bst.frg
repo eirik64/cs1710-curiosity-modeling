@@ -45,6 +45,71 @@ pred ValidStates {
     }
 }
 
+example simpleNotValid is not ValidStates for {
+    State = `S0
+    Node = `N1 + `N2 + `N3
+    l_child = `N1 -> `N2
+    r_child = `N1 -> `N3
+    elt = `N1 -> 4 + `N2 -> 0 + `N3 -> 0
+    root = `S0 -> `N1
+
+}
+
+example leftSubTreeStillLower is ValidStates for {
+    State = `S0
+    Node = `N1 + `N2 + `N3 + `N4
+    l_child = `N1 -> `N2
+    r_child = `N1 -> `N3 + `N2 -> `N4
+    elt = `N1 -> 4 + `N2 -> 0 + `N3 -> 5 + `N4 -> 2
+    root = `S0 -> `N1
+}
+
+example noRightSubTreeFromRoot is ValidStates for {
+    State = `S0
+    Node = `N1 + `N2 + `N3 + `N4
+    l_child = `N1 -> `N2
+    r_child = `N2 -> `N4 + `N4 -> `N3
+    elt = `N1 -> 4 + `N2 -> 0 + `N3 -> 3 + `N4 -> 2
+    root = `S0 -> `N1
+}
+
+example subNodeNotGreater is not ValidStates for {
+    State = `S0
+    Node = `N1 + `N2 + `N3 + `N4
+    l_child = `N1 -> `N2
+    r_child = `N2 -> `N4 + `N4 -> `N3
+    elt = `N1 -> 4 + `N2 -> 0 + `N3 -> 5 + `N4 -> 2
+    root = `S0 -> `N1
+}
+
+example childNotParent is not ValidStates for {
+    State = `S0
+    Node = `N1 + `N2  + `N4
+    l_child = `N1 -> `N2
+    r_child = `N2 -> `N4 + `N4 -> `N2
+    elt = `N1 -> 4 + `N2 -> 0 + `N4 -> 2
+    root = `S0 -> `N1
+}
+
+example childNotRoot is not ValidStates for {
+     State = `S0
+    Node = `N1 + `N2 + `N3 + `N4
+    l_child = `N1 -> `N2 
+    r_child = `N2 -> `N4 + `N4 -> `N3 + `N3 -> `N1
+    elt = `N1 -> 4 + `N2 -> 0 + `N3 -> 3 + `N4 -> 2
+    root = `S0 -> `N1
+}
+
+example rootNoParents is not ValidStates for {
+     State = `S0
+    Node = `N1 + `N2 + `N3 + `N4
+    l_child = `N1 -> `N2 
+    r_child = `N2 -> `N4 + `N4 -> `N3 + `N3 -> `N1
+    elt = `N1 -> 4 + `N2 -> 0 + `N3 -> 3 + `N4 -> 2
+    root = `S0 -> `N2
+}
+
+
 test expect {
     noPredicate: {} is sat
     -- every node is less than/greater than root node in their respective spots
@@ -122,4 +187,4 @@ test expect {
 
 run {
     ValidStates
-} for exactly 10 Node
+} for exactly 5 Node
