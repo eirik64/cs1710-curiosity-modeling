@@ -16,3 +16,5 @@ State Sig - Keeps track of a singular root node for the BST for that state. Stat
 Node Sig - Keeps track of the contents of a singular node as well as what it's left and right children are. This contains our entire BST.
 
 ValidState Pred - Determines whether an instance of a BST meets the following criteria: Nodes don't point to themselves, all nodes must be reachable from the root, no node can reach the root, left child an right child shouldn't be the same, every node has a unique number, every node to the left of the parent is less than the parent, and every node to the right of the parent is greater than the parent. Without this predicate, we would have a jumbled mess of a BST. This constrains our model to be a BST.
+
+Runtime: Should take around ~25 seconds to run all tests + examples together.
