@@ -11,7 +11,7 @@ help with implementing Insertion/Deletion. We have a simple run statement that r
 
 At a high level, what do each of your sigs and preds represent in the context of the model? Justify the purpose for their existence and how they fit together.
 
-State Sig - Keeps track of a singular root node for the BST for that state as well as the following states in case transition states are implemented. State sig isn't truly necessary since we aren't modeling transitions but at the very least it holds the place of our root node
+State Sig - Keeps track of a singular root node for the BST for that state. State sig isn't truly necessary since we aren't modeling transitions but at the very least it holds the place of our root node and if we decided to model transitions, it should be as easy of an inclusion as adding a next field in the sig.
 
 Node Sig - Keeps track of the contents of a singular node as well as what it's left and right children are. This contains our entire BST.
 
