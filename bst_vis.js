@@ -1,7 +1,19 @@
 const d3 = require('d3')
 let num_states = 0;
 let num_nodes = 0;
+let depth = 0;
 d3.selectAll("svg > *").remove();
+
+function max_depth(state) {
+    depth = recur_max_depth(state.root) + 1; //Includes bottom leaf
+}
+
+function recur_max_depth(current_node) {
+    if (current_node.elt.toString() == "") return 0;
+    let l_tree = recur_max_depth(current_node.l_child);
+    let r_tree = recur_max_depth(current_node.r_child);
+    return 1 + Math.max(l_tree, r_tree);
+}
 
 function countNumNodes(state) {
     num_nodes = recurCountNodes(state.root);
@@ -27,7 +39,7 @@ function printNode(row, col, yoffset, distance, value) {
     let x2_left = ((row - (distance/2.0))+1)*25;
     let x2_right = ((row + (distance/2.0))+1)*25;
     let y2 = ((col+1)+1)*15 + yoffset+30;
-    let r = 10;
+    let r = 15;
     d3.select(svg)
         .append("line")
         .style("stroke", "black")
@@ -83,10 +95,21 @@ function printState(currentNode, yoffset, row, col, distance) {
 var offset = 5
 countStates();
 for(b = 0; b < num_states; b++) {  
-if(State.atom("State"+b) != null) {
-    let state = State.atom("State"+b);
-    countNumNodes(state);
-    printState(state.root, offset, num_nodes/2.0, 0, num_nodes/2.0);
-}  
-offset = offset + 55;
+    if(State.atom("State"+b) != null) {
+        let state = State.atom("State"+b);
+        countNumNodes(state);
+        max_depth(state);
+        printState(state.root, offset, num_nodes/2.0, 0, num_nodes/2.0);
+    }  
+    
+    offset = offset + depth*45 + 10;
+    d3.select(svg)
+        .style("stroke", "black")
+        .append("line")
+        .attr("x1", 0)
+        .attr("y1", offset - 10)
+        .attr("x2", 500)
+        .attr("y2", offset - 10)
+        .attr("stroke-dasharray",5,5);
+    
 }
